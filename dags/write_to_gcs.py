@@ -1,14 +1,17 @@
 
 """DAG with a custom operator that creates and writes example data to GCS. """
 
-from airflow import DAG
 from datetime import datetime
 from custom_operators.gcs_operators import ExampleDataToGCSOperator
 
+from airflow import DAG
+from airflow.utils.dates import days_ago
+
+
 with DAG(
     'create_and_write_example_data_to_gcs',
-    start_date=datetime(2021, 1, 1),
-    schedule_interval='@daily'
+    start_date=days_ago(2),
+    schedule_interval=None
 ) as dag:
 
     create_and_write_example_data = ExampleDataToGCSOperator(
