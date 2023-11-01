@@ -79,8 +79,8 @@ airflowVersion: "2.7.1"
 # Images
 images:
   airflow:
-    repository: ~
-    tag: ~
+    repository: asia-southeast1-docker.pkg.dev/ula-backend/airflow-gke/airflow-plugins-dependencies
+    tag: 1.0.0
     # Specifying digest takes precedence over tag.
     digest: ~
     pullPolicy: IfNotPresent
@@ -2424,7 +2424,7 @@ dags:
     # interval between git sync attempts in seconds
     # high values are more likely to cause DAGs to become out of sync between different components
     # low values cause more traffic to the remote git repository
-    wait: 5
+    wait: 60
     containerName: git-sync
     uid: 65533
 
