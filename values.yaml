@@ -261,7 +261,7 @@ rbac:
 
 # Airflow executor
 # One of: LocalExecutor, LocalKubernetesExecutor, CeleryExecutor, KubernetesExecutor, CeleryKubernetesExecutor
-executor: "LocalExecutor"
+executor: "KubernetesExecutor"
 
 # If this is true and using LocalExecutor/KubernetesExecutor/CeleryKubernetesExecutor, the scheduler's
 # service account will have access to communicate with the api-server and launch pods.
@@ -270,15 +270,20 @@ executor: "LocalExecutor"
 allowPodLaunching: true
 
 # Environment variables for all airflow containers
-env: []
-# - name: ""
-#   value: ""
+env:
+  - name: GOOGLE_APPLICATION_CREDENTIALS
+    value: "/opt/airflow/secrets/credentials.json"
 
 # Volumes for all airflow containers
-volumes: []
+volumes:
+  - name: gcp-credentials-key
+    secret:
+      secretName: airflow-gcp-credentials
 
 # VolumeMounts for all airflow containers
-volumeMounts: []
+volumeMounts:
+  - name: gcp-credentials-key
+    mountPath: /opt/airflow/secrets
 
 # Secrets for all airflow containers
 secret: []
@@ -2256,8 +2261,12 @@ config:
     colored_console_log: 'False'
     remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
   logging:
-    remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
-    colored_console_log: 'False'
+    # remote_logging: '{{- ternary "True" "False" .Values.elasticsearch.enabled }}'
+    remote_logging: 'True'
+    colored_console_log: 'True'
+    remote_base_log_folder: 'gs://stg-data-airflow'
+    remote_log_conn_id: 'airflow-gcp-credentials'
+    google_key_path: '/opt/airflow/secrets/credentials.json'
   metrics:
     statsd_on: '{{ ternary "True" "False" .Values.statsd.enabled }}'
     statsd_port: 9125
