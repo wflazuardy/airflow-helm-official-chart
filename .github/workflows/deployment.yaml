@@ -21,7 +21,7 @@ jobs:
     steps:
 
     - name: code checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: install the gcloud cli
       uses: google-github-actions/auth@v1
@@ -31,12 +31,12 @@ jobs:
         # export_default_credentials: true
         credentials_json: ${{ secrets.GKE_SA_KEY }}
 
-    - name: build and push the docker image\
+    - name: build and push the docker image
       run: |
         docker build \
           --tag "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.IMAGE_TAG}}" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
-        gcloud auth configure-docker ${{env.GAR_REGION}}.pkg.dev --quiet
+        gcloud auth configure-docker ${{env.GAR_REGION}}-docker.pkg.dev --quiet
         docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.IMAGE_TAG}}"
