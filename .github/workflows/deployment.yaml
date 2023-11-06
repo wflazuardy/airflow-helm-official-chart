@@ -31,8 +31,12 @@ jobs:
         # export_default_credentials: true
         credentials_json: ${{ secrets.GKE_SA_KEY }}
 
-    - name: build and push the docker image
-      env:
-        GOOGLE_PROJECT: ${{ env.PROJECT_ID }}
+    - name: build and push the docker image\
       run: |
-        gcloud auth configure-docker ${{env.GAR_REGION}}.pkg.dev
+        docker build \
+          --tag "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{IMAGE_TAG}}" \
+          --build-arg GITHUB_SHA="$GITHUB_SHA" \
+          --build-arg GITHUB_REF="$GITHUB_REF" \
+          .
+        gcloud auth configure-docker ${{env.GAR_REGION}}.pkg.dev --quiet
+        docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{IMAGE_TAG}}"
