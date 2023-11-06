@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: autopilot-cluster-1    # cluster name
+  GKE_CLUSTER: data-team-cluster    # cluster name
   GKE_ZONE: asia-southeast1-a   # cluster zone
   IMAGE: airflow-plugins-dependencies # image name
   IMAGE_TAG: 1.0.1 # image tag
