@@ -82,6 +82,6 @@ jobs:
       env:
         GOOGLE_PROJECT: ${{ env.PROJECT_ID }}
       run: |
-        gcloud auth configure-docker us-central1-docker.pkg.dev
+        gcloud auth configure-docker $GAR_ZONE.pkg.dev
         docker build -t $GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$IMAGE_TAG .
         docker push $GAR_ZONE-docker.pkg.dev/$PROJECT_ID/$GAR_REPO/$IMAGE:$IMAGE_TAG
