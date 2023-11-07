@@ -6,13 +6,8 @@ on:
       - main
 
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: data-team-cluster    # cluster name
-  GKE_ZONE: asia-southeast1-a   # cluster zone
   IMAGE: airflow-plugins-dependencies # image name
-  IMAGE_TAG: 1.0.1 # image tag
-  GAR_REGION: asia-southeast1
-  GAR_ZONE: asia-southeast1-a # artifact registry zone
+  GAR_REGION: asia-southeast1rtifact registry zone
   GAR_REPO: airflow-gke # artifact registry repository
 
 jobs:
@@ -23,6 +18,12 @@ jobs:
     - name: code checkout
       uses: actions/checkout@v3
 
+    - name: Set short git commit SHA
+      id: vars
+      run: |
+        calculatedSha=$(git rev-parse --short ${{ github.sha }})
+        echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
     - name: install the gcloud cli
       uses: google-github-actions/auth@v1
       with:
@@ -31,9 +32,11 @@ jobs:
     - name: build and push the docker image
       run: |
         docker build \
-          --tag "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.IMAGE_TAG}}" \
+          --tag "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:latest" \
+          --tag "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.COMMIT_SHORT_SHA}}" \
           --build-arg GITHUB_SHA="$GITHUB_SHA" \
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
         gcloud auth configure-docker ${{env.GAR_REGION}}-docker.pkg.dev --quiet
-        docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.IMAGE_TAG}}"
+        docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:latest"
+        docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.COMMIT_SHORT_SHA}}"

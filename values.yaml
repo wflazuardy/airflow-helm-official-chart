@@ -286,10 +286,10 @@ volumeMounts:
     mountPath: /opt/airflow/secrets
 
 # Secrets for all airflow containers
-secret: []
-# - envName: ""
-#   secretName: ""
-#   secretKey: ""
+secret:
+  - envName: "ADMIN_PASSWORD"
+    secretName: "airfllow-user-credentials"
+    secretKey: "ADMIN_PASSWORD"
 
 # Enables selected built-in secrets that are set via environment variables by default.
 # Those secrets are provided by the Helm Chart secrets by default but in some cases you
@@ -1202,10 +1202,10 @@ webserver:
     enabled: true
     role: Admin
     username: admin
-    email: admin@example.com
+    email: wildan.lazuardy@ula.app
     firstName: admin
     lastName: user
-    password: admin
+    password: $(ADMIN_PASSWORD)
 
   # Launch additional containers into webserver.
   extraContainers: []
