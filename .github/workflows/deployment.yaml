@@ -38,5 +38,4 @@ jobs:
           --build-arg GITHUB_REF="$GITHUB_REF" \
           .
         gcloud auth configure-docker ${{env.GAR_REGION}}-docker.pkg.dev --quiet
-        docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:latest"
         docker push "${{env.GAR_REGION}}-docker.pkg.dev/${{env.PROJECT_ID}}/${{env.GAR_REPO}}/${{env.IMAGE}}:${{env.COMMIT_SHORT_SHA}}"
